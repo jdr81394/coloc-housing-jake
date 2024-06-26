@@ -1,15 +1,53 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { Outlet, Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from 'react-router-dom';
+import ShoppingList from './Pages/ItemAddPage';
+import Dashboard from './Pages/DashboardPage';
+import ItemDisplay from './Components/ItemDisplayComponent';
+import Error from './Pages/ErrorPage';
+import NavBar from './Components/NavbarComponent';
+import { ListContextProvider } from './Contexts/ListContext';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
+
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Fragment>
+    <Route 
+        path="/"
+        ErrorBoundary={Error}
+        element={
+        <App>
+          <NavBar/>
+          <Outlet/> 
+        </App>
+        } 
+        >
+      <Route path="dashboard" element={
+          <Dashboard>
+            <Outlet/>
+          </Dashboard>
+          }>
+            <Route path="item/:id" element={<ItemDisplay/>}/>
+          </Route>
+      <Route path="shopping" element={<ShoppingList/>} ></Route> 
+    </Route>
+
+    </Fragment>
+  )
+)
+
 root.render(
   <React.StrictMode>
-    <App />
+    <ListContextProvider>
+      <RouterProvider router={router}/>
+    </ListContextProvider>
   </React.StrictMode>
 );
 
